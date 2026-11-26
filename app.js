@@ -163,7 +163,7 @@ return String(value ?? "").replace(/[&<>"']/g, char => ({
 ">": "&gt;",
 '"': "&quot;",
 "'": "&#039;"
-})[char]);
+})[char]);}
   function showLogin(message = "") {
 document.body.innerHTML = `
 ${appHeader()}
