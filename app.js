@@ -9,15 +9,29 @@ const db = window.supabase.createClient(
   SUPABASE_KEY
 );
 
-document.addEventListener("DOMContentLoaded", function () {
-  showLogin();
 
-  db.auth.onAuthStateChange(function (event) {
-    if (event === "PASSWORD_RECOVERY") {
+document.addEventListener("DOMContentLoaded", async function () {
+  db.auth.onAuthStateChange(function (event, session) {
+    if (
+      event === "PASSWORD_RECOVERY" ||
+      (session && window.location.hash.includes("type=recovery"))
+    ) {
       showResetForm();
     }
   });
+
+  const { data } = await db.auth.getSession();
+
+  if (
+    data.session &&
+    window.location.hash.includes("type=recovery")
+  ) {
+    showResetForm();
+  } else {
+    showLogin();
+  }
 });
+
 
 function showLogin() {
   document.body.innerHTML = `
