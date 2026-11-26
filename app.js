@@ -169,6 +169,11 @@ async function loginUser(e) {
     .select("full_name, role, is_active")
     .eq("id", data.user.id)
     .single();
+  console.log("PROFILE DEBUG:", {
+  userId: data.user.id,
+  profile,
+  profileError
+});
 
   if (profileError || !profile || !profile.is_active) {
     await db.auth.signOut();
