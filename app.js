@@ -175,11 +175,16 @@ async function loginUser(e) {
   profileError
 });
 
-  if (profileError || !profile || !profile.is_active) {
-    await db.auth.signOut();
-    message.textContent = "Active profile not found. Contact Admin.";
-    return;
-  }
+if (profileError || !profile || !profile.is_active) {
+  console.error("PROFILE ERROR:", profileError);
+  console.error("PROFILE DATA:", profile);
+
+  message.textContent =
+    "Profile Error: " +
+    (profileError?.message || "Profile missing or inactive");
+
+  return;
+}
 
   showDashboard(profile);
 }
