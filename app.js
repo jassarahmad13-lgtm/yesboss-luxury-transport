@@ -665,15 +665,7 @@ db.from("bookings")
 .eq("status", "pending"),
 
 db.from("bookings")
-.select(`
-booking_reference,
-customer_name,
-guest_name,
-trip_type,
-pickup_location,
-booking_date,
-status
-`)
+.select("*")
 .order("created_at", { ascending: false })
 .limit(10)
 
