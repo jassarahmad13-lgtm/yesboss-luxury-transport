@@ -330,9 +330,24 @@ function showResetForm() {
       <div class="card">
         <h2>Choose New Password</h2>
 
-        <input id="newPassword" type="password" placeholder="New password">
+        <input
+          id="newPassword"
+          type="password"
+          placeholder="New Password"
+        >
 
-        <button class="full" onclick="saveNewPassword()">UPDATE PASSWORD</button>
+        <input
+          id="confirmPassword"
+          type="password"
+          placeholder="Confirm New Password"
+        >
+
+        <button
+          class="full"
+          onclick="saveNewPassword()"
+        >
+          UPDATE PASSWORD
+        </button>
 
         <p class="message" id="message"></p>
       </div>
@@ -342,10 +357,16 @@ function showResetForm() {
 
 async function saveNewPassword() {
   const password = document.getElementById("newPassword").value;
+  const confirmPassword = document.getElementById("confirmPassword").value;
   const message = document.getElementById("message");
 
   if (!password || password.length < 6) {
     message.textContent = "Password must be at least 6 characters.";
+    return;
+  }
+
+  if (password !== confirmPassword) {
+    message.textContent = "Passwords do not match.";
     return;
   }
 
