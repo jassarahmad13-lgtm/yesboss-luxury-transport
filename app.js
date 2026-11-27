@@ -457,7 +457,7 @@ CREATE BOOKING
 </form>
 
 </div>
-
+<div id="bookingDetails"></div>
 <div class="card">
 
 <div class="topline">
@@ -477,6 +477,7 @@ CREATE BOOKING
 <th>Pickup</th>
 <th>Date</th>
 <th>Status</th>
+<th>Action</th>
 </tr>
 </thead>
 
@@ -713,6 +714,11 @@ return `
 <td>${escapeText(booking.pickup_location || "N/A")}</td>
 <td>${escapeText(booking.booking_date || "N/A")}</td>
 <td class="status">${escapeText(booking.status || "N/A")}</td>
+<td>
+  <button onclick="showBookingDetails('${escapeText(booking.id)}')">
+    VIEW DETAILS
+  </button>
+</td>
 </tr>
 `;
 }).join("");
@@ -721,7 +727,62 @@ if (message) {
 message.textContent = "Showing latest " + bookings.length + " bookings.";
 }
 }
+async function showBookingDetails(bookingId) {
+  const container = document.getElementById("bookingDetails");
 
+  if (!container) return;
+
+  container.innerHTML = `
+    <div class="card">
+      <p>Loading booking details...</p>
+    </div>
+  `;
+
+  const { data: booking, error } = await db
+    .from("bookings")
+    .select("*")
+    .eq("id", bookingId)
+    .single();
+
+  if (error) {
+    container.innerHTML = `
+      <div class="card">
+        <p>Booking Error: ${escapeText(error.message)}</p>
+        <button onclick="closeBookingDetails()">CLOSE</button>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = `
+    <div class="card">
+      <h3>Booking Details</h3>
+
+      <p><strong>Reference:</strong> ${escapeText(booking.booking_reference || "N/A")}</p>
+      <p><strong>Guest:</strong> ${escapeText(booking.guest_name || booking.customer_name || "N/A")}</p>
+      <p><strong>Phone:</strong> ${escapeText(booking.guest_phone || "N/A")}</p>
+      <p><strong>Trip:</strong> ${escapeText(booking.trip_type || booking.booking_type || "N/A")}</p>
+      <p><strong>Pickup:</strong> ${escapeText(booking.pickup_location || "N/A")}</p>
+      <p><strong>Drop-off:</strong> ${escapeText(booking.dropoff_location || "N/A")}</p>
+      <p><strong>Flight:</strong> ${escapeText(booking.flight_number || "N/A")}</p>
+      <p><strong>Date:</strong> ${escapeText(booking.booking_date || "N/A")}</p>
+      <p><strong>Pickup Time:</strong> ${escapeText(booking.pickup_time || "N/A")}</p>
+      <p><strong>Status:</strong> ${escapeText(booking.status || "N/A")}</p>
+
+      <button onclick="closeBookingDetails()">CLOSE</button>
+    </div>
+  `;
+
+  container.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function closeBookingDetails() {
+  const container = document.getElementById("bookingDetails");
+
+  if (container) {
+    container.innerHTML = "";
+  }
+}
 function setStat(elementId, result) {
 const element = document.getElementById(elementId);
 
